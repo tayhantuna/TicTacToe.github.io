@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function minimax(cells, depth, isMaximizing) {
+    function minimax(cells, depth, alpha, beta, isMaximizing) {
     if (checkWin()) {
         return isMaximizing ? -10 + depth : 10 - depth;
     } else if (checkDraw()) {
@@ -75,9 +75,13 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < cells.length; i++) {
             if (cells[i].textContent === "") {
                 cells[i].textContent = "O";
-                let score = minimax(cells, depth + 1, false);
+                let score = minimax(cells, depth + 1, alpha, beta, false);
                 cells[i].textContent = "";
                 bestScore = Math.max(score, bestScore);
+                alpha = Math.max(alpha, bestScore);
+                if (beta <= alpha) {
+                    break; // Alpha-beta pruning
+                }
             }
         }
         return bestScore;
@@ -86,14 +90,19 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < cells.length; i++) {
             if (cells[i].textContent === "") {
                 cells[i].textContent = "X";
-                let score = minimax(cells, depth + 1, true);
+                let score = minimax(cells, depth + 1, alpha, beta, true);
                 cells[i].textContent = "";
                 bestScore = Math.min(score, bestScore);
+                beta = Math.min(beta, bestScore);
+                if (beta <= alpha) {
+                    break; // Alpha-beta pruning
+                }
             }
         }
         return bestScore;
     }
 }
+
 
 
     // Check for a win
