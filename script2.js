@@ -1,18 +1,13 @@
-const game = document.querySelectorAll(".cell");
-const cells = [];
-const boardSize = 5; // Değişen oyun tahtası boyutu
-const winLength = 5; // Kazanma koşulu uzunluğu
-
 document.addEventListener("DOMContentLoaded", function () {
     const board = document.getElementById("board");
     const restartBtn = document.getElementById("restartBtn");
     const message = document.getElementById("message");
-
+    const cells = [];
     let currentPlayer = "X";
     let gameActive = true;
 
     // Initialize the game board
-    for (let i = 0; i < boardSize * boardSize; i++) {
+    for (let i = 0; i < 25; i++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
         cell.dataset.index = i;
@@ -100,44 +95,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Check for a win
     function checkWin() {
-        const winConditions = generateWinConditions();
+        const winConditions = [
+            // Rows
+            [0, 1, 2, 3, 4],
+            [5, 6, 7, 8, 9],
+            [10, 11, 12, 13, 14],
+            [15, 16, 17, 18, 19],
+            [20, 21, 22, 23, 24],
+            // Columns
+            [0, 5, 10, 15, 20],
+            [1, 6, 11, 16, 21],
+            [2, 7, 12, 17, 22],
+            [3, 8, 13, 18, 23],
+            [4, 9, 14, 19, 24],
+            // Diagonals
+            [0, 6, 12, 18, 24],
+            [4, 8, 12, 16, 20]
+        ];
+
         return winConditions.some(condition => {
             return condition.every(index => cells[index].textContent === currentPlayer);
         });
-    }
-
-    // Generate win conditions dynamically for the given board size and win length
-    function generateWinConditions() {
-        const winConditions = [];
-
-        // Rows
-        for (let i = 0; i < boardSize; i++) {
-            for (let j = 0; j <= boardSize - winLength; j++) {
-                winConditions.push(Array.from({ length: winLength }, (_, k) => i * boardSize + j + k));
-            }
-        }
-
-        // Columns
-        for (let i = 0; i <= boardSize - winLength; i++) {
-            for (let j = 0; j < boardSize; j++) {
-                winConditions.push(Array.from({ length: winLength }, (_, k) => (i + k) * boardSize + j));
-            }
-        }
-
-        // Diagonals
-        for (let i = 0; i <= boardSize - winLength; i++) {
-            for (let j = 0; j <= boardSize - winLength; j++) {
-                const diagonal1 = [];
-                const diagonal2 = [];
-                for (let k = 0; k < winLength; k++) {
-                    diagonal1.push((i + k) * boardSize + j + k);
-                    diagonal2.push((i + k) * boardSize + (j + winLength - 1 - k));
-                }
-                winConditions.push(diagonal1, diagonal2);
-            }
-        }
-
-        return winConditions;
     }
 
     // Check for a draw
@@ -166,10 +144,4 @@ document.addEventListener("DOMContentLoaded", function () {
             message.textContent = "Sıra oyuncuda";
         }
     });
-});
-
-cells.forEach(cell => {
-    if (cell.textContent === "X") {
-        cell.classList.add("x-mark");
-    }
 });
