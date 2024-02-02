@@ -63,37 +63,38 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Minimax algorithm for bot move
     function minimax(cells, depth, isMaximizing) {
-        if (checkWin()) {
-            return isMaximizing ? -10 + depth : 10 - depth;
-        } else if (checkDraw()) {
-            return 0;
-        }
-        if (isMaximizing) {
-            let bestScore = -Infinity;
-            for (let i = 0; i < cells.length; i++) {
-                if (cells[i].textContent === "") {
-                    cells[i].textContent = "O";
-                    let score = minimax(cells, depth + 1, false);
-                    cells[i].textContent = "";
-                    bestScore = Math.max(score, bestScore);
-                }
-            }
-            return bestScore;
-        } else {
-            let bestScore = Infinity;
-            for (let i = 0; i < cells.length; i++) {
-                if (cells[i].textContent === "") {
-                    cells[i].textContent = "X";
-                    let score = minimax(cells, depth + 1, true);
-                    cells[i].textContent = "";
-                    bestScore = Math.min(score, bestScore);
-                }
-            }
-            return bestScore;
-        }
+    if (checkWin()) {
+        return isMaximizing ? -10 + depth : 10 - depth;
+    } else if (checkDraw()) {
+        return 0;
     }
+
+    if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i].textContent === "") {
+                cells[i].textContent = "O";
+                let score = minimax(cells, depth + 1, false);
+                cells[i].textContent = "";
+                bestScore = Math.max(score, bestScore);
+            }
+        }
+        return bestScore;
+    } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i].textContent === "") {
+                cells[i].textContent = "X";
+                let score = minimax(cells, depth + 1, true);
+                cells[i].textContent = "";
+                bestScore = Math.min(score, bestScore);
+            }
+        }
+        return bestScore;
+    }
+}
+
 
     // Check for a win
     function checkWin() {
