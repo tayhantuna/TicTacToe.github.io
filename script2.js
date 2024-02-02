@@ -63,45 +63,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function minimax(cells, depth, alpha, beta, isMaximizing) {
+   function minimax(cells, depth, alpha, beta, color) {
     if (checkWin()) {
-        return isMaximizing ? -10 + depth : 10 - depth;
+        return color * (10 - depth);
     } else if (checkDraw()) {
         return 0;
     }
 
-    if (isMaximizing) {
-        let bestScore = -Infinity;
-        for (let i = 0; i < cells.length; i++) {
-            if (cells[i].textContent === "") {
-                cells[i].textContent = "O";
-                let score = minimax(cells, depth + 1, alpha, beta, false);
-                cells[i].textContent = "";
-                bestScore = Math.max(score, bestScore);
-                alpha = Math.max(alpha, bestScore);
-                if (beta <= alpha) {
-                    break; // Alpha-beta pruning
-                }
+    let bestScore = -Infinity;
+
+    for (let i = 0; i < cells.length; i++) {
+        if (cells[i].textContent === "") {
+            cells[i].textContent = color === 1 ? "O" : "X";
+            let score = -negamax(cells, depth + 1, -beta, -alpha, -color);
+            cells[i].textContent = "";
+
+            bestScore = Math.max(score, bestScore);
+            alpha = Math.max(alpha, score);
+
+            if (alpha >= beta) {
+                break; // Alpha-beta pruning
             }
         }
-        return bestScore;
-    } else {
-        let bestScore = Infinity;
-        for (let i = 0; i < cells.length; i++) {
-            if (cells[i].textContent === "") {
-                cells[i].textContent = "X";
-                let score = minimax(cells, depth + 1, alpha, beta, true);
-                cells[i].textContent = "";
-                bestScore = Math.min(score, bestScore);
-                beta = Math.min(beta, bestScore);
-                if (beta <= alpha) {
-                    break; // Alpha-beta pruning
-                }
-            }
-        }
-        return bestScore;
     }
+
+    return bestScore;
 }
+
 
 
 
