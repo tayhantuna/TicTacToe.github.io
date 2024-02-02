@@ -1,5 +1,8 @@
 const game = document.querySelectorAll(".cell");
 const cells = [];
+const boardSize = 5; // Değişen oyun tahtası boyutu
+const winLength = 5; // Kazanma koşulu uzunluğu
+
 document.addEventListener("DOMContentLoaded", function () {
     const board = document.getElementById("board");
     const restartBtn = document.getElementById("restartBtn");
@@ -9,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let gameActive = true;
 
     // Initialize the game board
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < boardSize * boardSize; i++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
         cell.dataset.index = i;
@@ -63,59 +66,78 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-   function minimax(cells, depth, alpha, beta, color) {
-    if (checkWin()) {
-        return color * (10 - depth);
-    } else if (checkDraw()) {
-        return 0;
-    }
-
-    let bestScore = -Infinity;
-
-    for (let i = 0; i < cells.length; i++) {
-        if (cells[i].textContent === "") {
-            cells[i].textContent = color === 1 ? "O" : "X";
-            let score = -negamax(cells, depth + 1, -beta, -alpha, -color);
-            cells[i].textContent = "";
-
-            bestScore = Math.max(score, bestScore);
-            alpha = Math.max(alpha, score);
-
-            if (alpha >= beta) {
-                break; // Alpha-beta pruning
+    // Minimax algorithm for bot move
+    function minimax(cells, depth, isMaximizing) {
+        if (checkWin()) {
+            return isMaximizing ? -10 + depth : 10 - depth;
+        } else if (checkDraw()) {
+            return 0;
+        }
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].textContent === "") {
+                    cells[i].textContent = "O";
+                    let score = minimax(cells, depth + 1, false);
+                    cells[i].textContent = "";
+                    bestScore = Math.max(score, bestScore);
+                }
             }
+            return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].textContent === "") {
+                    cells[i].textContent = "X";
+                    let score = minimax(cells, depth + 1, true);
+                    cells[i].textContent = "";
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+            return bestScore;
         }
     }
 
-    return bestScore;
-}
-
-
-
-
     // Check for a win
     function checkWin() {
-        const winConditions = [
-            // Rows
-            [0, 1, 2, 3, 4],
-            [5, 6, 7, 8, 9],
-            [10, 11, 12, 13, 14],
-            [15, 16, 17, 18, 19],
-            [20, 21, 22, 23, 24],
-            // Columns
-            [0, 5, 10, 15, 20],
-            [1, 6, 11, 16, 21],
-            [2, 7, 12, 17, 22],
-            [3, 8, 13, 18, 23],
-            [4, 9, 14, 19, 24],
-            // Diagonals
-            [0, 6, 12, 18, 24],
-            [4, 8, 12, 16, 20]
-        ];
-
+        const winConditions = generateWinConditions();
         return winConditions.some(condition => {
             return condition.every(index => cells[index].textContent === currentPlayer);
         });
+    }
+
+    // Generate win conditions dynamically for the given board size and win length
+    function generateWinConditions() {
+        const winConditions = [];
+
+        // Rows
+        for (let i = 0; i < boardSize; i++) {
+            for (let j = 0; j <= boardSize - winLength; j++) {
+                winConditions.push(Array.from({ length: winLength }, (_, k) => i * boardSize + j + k));
+            }
+        }
+
+        // Columns
+        for (let i = 0; i <= boardSize - winLength; i++) {
+            for (let j = 0; j < boardSize; j++) {
+                winConditions.push(Array.from({ length: winLength }, (_, k) => (i + k) * boardSize + j));
+            }
+        }
+
+        // Diagonals
+        for (let i = 0; i <= boardSize - winLength; i++) {
+            for (let j = 0; j <= boardSize - winLength; j++) {
+                const diagonal1 = [];
+                const diagonal2 = [];
+                for (let k = 0; k < winLength; k++) {
+                    diagonal1.push((i + k) * boardSize + j + k);
+                    diagonal2.push((i + k) * boardSize + (j + winLength - 1 - k));
+                }
+                winConditions.push(diagonal1, diagonal2);
+            }
+        }
+
+        return winConditions;
     }
 
     // Check for a draw
