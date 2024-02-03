@@ -15,12 +15,14 @@ body {
 h1 {
   color: #333;
 }
+
 .board {
   display: grid;
   grid-template-columns: repeat(5, 100px);
   gap: 5px;
   margin: 20px auto;
 }
+
 .cell {
   width: 100px;
   height: 100px;
@@ -36,6 +38,7 @@ h1 {
 .cell:hover {
   background-color: #ddd;
 }
+
 button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -50,6 +53,7 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
 .x-mark {
     color: red;
 }
