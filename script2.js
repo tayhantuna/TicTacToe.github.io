@@ -1,13 +1,17 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     const board = document.getElementById("board");
     const restartBtn = document.getElementById("restartBtn");
     const message = document.getElementById("message");
     const cells = [];
+    const BOARD_SIZE = 5;
+    const WINNING_LENGTH = 3;
+    const MAX_DEPTH = 3; // Derinlik sınırlaması
+
     let currentPlayer = "X";
     let gameActive = true;
 
     // Initialize the game board
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
         cell.dataset.index = i;
@@ -20,9 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function cellClickHandler(cell) {
         if (!gameActive || cell.textContent !== "") return;
         cell.textContent = currentPlayer;
-        if (checkWin()) {
+        if (checkWin(cells, currentPlayer)) {
             endGame(currentPlayer + " kazandı!");
-        } else if (checkDraw()) {
+        } else if (checkDraw(cells)) {
             endGame("Berabere!");
         } else {
             currentPlayer = currentPlayer === "X" ? "O" : "X";
@@ -35,14 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Bot move
+    // Bot move using minimax algorithm with alpha-beta pruning
     function botMove() {
         let bestScore = -Infinity;
         let move;
         for (let i = 0; i < cells.length; i++) {
             if (cells[i].textContent === "") {
                 cells[i].textContent = currentPlayer;
-                let score = minimax(cells, 0, false);
+                let score = minimax(cells, 0, false, -Infinity, Infinity);
                 cells[i].textContent = "";
                 if (score > bestScore) {
                     bestScore = score;
@@ -51,9 +55,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         cells[move].textContent = currentPlayer;
-        if (checkWin()) {
+        if (checkWin(cells, currentPlayer)) {
             endGame(currentPlayer + " kazandı!");
-        } else if (checkDraw()) {
+        } else if (checkDraw(cells)) {
             endGame("Berabere!");
         } else {
             currentPlayer = "X";
@@ -61,11 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Minimax algorithm for bot move
-    function minimax(cells, depth, isMaximizing) {
-        if (checkWin()) {
-            return isMaximizing ? -10 + depth : 10 - depth;
-        } else if (checkDraw()) {
+    // Minimax algorithm for bot move with alpha-beta pruning
+    function minimax(cells, depth, isMaximizing, alpha, beta) {
+        if (checkWin(cells, "X")) {
+            return -10 + depth;
+        } else if (checkWin(cells, "O")) {
+            return 10 - depth;
+        } else if (checkDraw(cells)) {
+            return 0;
+        }
+        if (depth >= MAX_DEPTH) { // Derinlik sınırlaması kontrolü
             return 0;
         }
         if (isMaximizing) {
@@ -73,9 +82,11 @@ document.addEventListener("DOMContentLoaded", function () {
             for (let i = 0; i < cells.length; i++) {
                 if (cells[i].textContent === "") {
                     cells[i].textContent = "O";
-                    let score = minimax(cells, depth + 1, false);
+                    let score = minimax(cells, depth + 1, false, alpha, beta);
                     cells[i].textContent = "";
                     bestScore = Math.max(score, bestScore);
+                    alpha = Math.max(alpha, score);
+                    if (beta <= alpha) break;
                 }
             }
             return bestScore;
@@ -84,9 +95,11 @@ document.addEventListener("DOMContentLoaded", function () {
             for (let i = 0; i < cells.length; i++) {
                 if (cells[i].textContent === "") {
                     cells[i].textContent = "X";
-                    let score = minimax(cells, depth + 1, true);
+                    let score = minimax(cells, depth + 1, true, alpha, beta);
                     cells[i].textContent = "";
                     bestScore = Math.min(score, bestScore);
+                    beta = Math.min(beta, score);
+                    if (beta <= alpha) break;
                 }
             }
             return bestScore;
@@ -94,32 +107,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Check for a win
-    function checkWin() {
-        const winConditions = [
-            // Rows
-            [0, 1, 2, 3, 4],
-            [5, 6, 7, 8, 9],
-            [10, 11, 12, 13, 14],
-            [15, 16, 17, 18, 19],
-            [20, 21, 22, 23, 24],
-            // Columns
-            [0, 5, 10, 15, 20],
-            [1, 6, 11, 16, 21],
-            [2, 7, 12, 17, 22],
-            [3, 8, 13, 18, 23],
-            [4, 9, 14, 19, 24],
-            // Diagonals
-            [0, 6, 12, 18, 24],
-            [4, 8, 12, 16, 20]
-        ];
-
-        return winConditions.some(condition => {
-            return condition.every(index => cells[index].textContent === currentPlayer);
-        });
+    function checkWin(cells, player) {
+        for (let i = 0; i < BOARD_SIZE; i++) {
+            for (let j = 0; j < BOARD_SIZE; j++) {
+                if (cells[i * BOARD_SIZE + j].textContent === player) {
+                    // Check horizontal, vertical, diagonal, and anti-diagonal
+                    for (let dx = -1; dx <= 1; dx++) {
+                        for (let dy = -1; dy <= 1; dy++) {
+                            if (dx === 0 && dy === 0) continue;
+                            let count = 1;
+                            for (let k = 1; k < WINNING_LENGTH; k++) {
+                                let ni = i + dx * k;
+                                let nj = j + dy * k;
+                                if (ni < 0 || ni >= BOARD_SIZE || nj < 0 || nj >= BOARD_SIZE || cells[ni * BOARD_SIZE + nj].textContent !== player) break;
+                                count++;
+                            }
+                            if (count === WINNING_LENGTH) return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     // Check for a draw
-    function checkDraw() {
+    function checkDraw(cells) {
         return cells.every(cell => cell.textContent !== "");
     }
 
