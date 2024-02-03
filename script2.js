@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const message = document.getElementById("message");
     const cells = [];
     const BOARD_SIZE = 5;
-    const WINNING_LENGTH = 3;
+    const WINNING_LENGTH = 4;
     const MAX_DEPTH = 3; // Derinlik sınırlaması
 
     let currentPlayer = "X";
