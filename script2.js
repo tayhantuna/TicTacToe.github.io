@@ -22,30 +22,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Handle cell click
     function cellClickHandler(cell) {
-        if (!gameActive || cell.textContent !== "") return;
-        cell.textContent = currentPlayer;
-        if (checkWin(cells, currentPlayer)) {
-            endGame(currentPlayer + " kazandı!");
-        } else if (checkDraw(cells)) {
-            endGame("Berabere!");
+    if (!gameActive || cell.textContent !== "") return;
+    cell.textContent = currentPlayer;
+    if (checkWin(cells, currentPlayer)) {
+        endGame(currentPlayer + " kazandı!");
+    } else if (checkDraw(cells)) {
+        endGame("Berabere!");
+    } else {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        if (currentPlayer === "O") {
+            message.textContent = "Sıra bot'ta";
+            cell.style.color = "blue"; // O mavi
+            setTimeout(botMove, 500); // Bot hareketini geciktir
         } else {
-            currentPlayer = currentPlayer === "X" ? "O" : "X";
-
-if (currentPlayer === 'X') {
-      cells[index].style.color = 'red'; // X kırmızı
-    } else if (currentPlayer === 'O') {
-      cells[index].style.color = 'blue'; // O mavi
-}
-          
-            if (currentPlayer === "O") {
-                message.textContent = "Sıra bot'ta";
-            
-                botMove();
-            } else {
-                message.textContent = "Sıra oyuncuda";
-            
-            }
+            message.textContent = "Sıra oyuncuda";
+            cell.style.color = "red"; // X kırmızı
         }
+    }
     }
 
     // Bot move using minimax algorithm with alpha-beta pruning
