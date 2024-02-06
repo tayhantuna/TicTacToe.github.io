@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
         cells[index].style.color = currentPlayer === 'X' ? 'red' : 'blue'; // Yazı rengini belirle
         if (currentPlayer === "O") {
             message.textContent = "Sıra bot'ta";
-            setTimeout(botMove, 500); // Bot hareketini geciktir
+            botMove(); // Bot hareketini geciktir
         } else {
             message.textContent = "Sıra oyuncuda";
         }
@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
         }
+        cell.style.color = "blue"
         cells[move].textContent = currentPlayer;
         if (checkWin(cells, currentPlayer)) {
             endGame(currentPlayer + " kazandı!");
