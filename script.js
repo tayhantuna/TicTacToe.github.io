@@ -28,6 +28,7 @@ function checkWinner() {
 function handleClick(index) {
   if (!cells[index].innerHTML && !checkWinner()) {
     cells[index].innerHTML = currentPlayer;
+    cells[index].style.color = currentPlayer === 'X' ? 'red' : 'blue'; // Yazı rengini belirle
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     messageElement.innerHTML = `Sıradaki Oyuncu: ${currentPlayer}`;
     checkWinner();
@@ -36,6 +37,7 @@ function handleClick(index) {
 
 function resetGame() {
   cells.forEach(cell => cell.innerHTML = '');
+  cells.forEach(cell => cell.style.color = ''); // Yazı rengini sıfırla
   currentPlayer = 'X';
   messageElement.innerHTML = `Sıradaki Oyuncu: ${currentPlayer}`;
 }
