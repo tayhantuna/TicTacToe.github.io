@@ -19,39 +19,34 @@ document.addEventListener("DOMContentLoaded", function() {
         cells.push(cell);
         board.appendChild(cell);
     }
+
+    // Handle cell click
+    function cellClickHandler(cell) {
+        if (!gameActive || cell.textContent !== "") return;
+        cell.textContent = currentPlayer;
+        if (checkWin(cells, currentPlayer)) {
+            endGame(currentPlayer + " kazandı!");
+        } else if (checkDraw(cells)) {
+            endGame("Berabere!");
+        } else {
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+
 if (currentPlayer === 'X') {
       cells[index].style.color = 'red'; // X kırmızı
     } else if (currentPlayer === 'O') {
       cells[index].style.color = 'blue'; // O mavi
 }
-    // Handle cell click
-     function cellClickHandler(cell) {
-    if (!gameActive || cell.textContent !== "") return;
-    cell.textContent = currentPlayer;
-    if (checkWin(cells, currentPlayer)) {
-        endGame(currentPlayer + " kazandı!");
-    } else if (checkDraw(cells)) {
-        endGame("Berabere!");
-    } else {
-
-        currentPlayer = currentPlayer === "X" ? "O" : "X";
-
-        if (currentPlayer === 'X') {
-      cells[index].style.color = 'red'; // X kırmızı
-    } else if (currentPlayer === 'O') {
-      cells[index].style.color = 'blue'; // O mavi
-        }
-        if (currentPlayer === "O") {
-            message.textContent = "Sıra bot'ta";
-            // O mavi
-            botMove();
-        } else {
-            message.textContent = "Sıra oyuncuda";
-            // X kırmızı
+          
+            if (currentPlayer === "O") {
+                message.textContent = "Sıra bot'ta";
+            
+                botMove();
+            } else {
+                message.textContent = "Sıra oyuncuda";
+            
+            }
         }
     }
-     }
-            
 
     // Bot move using minimax algorithm with alpha-beta pruning
     function botMove() {
