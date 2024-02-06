@@ -33,6 +33,7 @@ h1 {
   font-size: 36px;
   cursor: pointer;
   background-color: #fff;
+  color:#ff0000;
 }
 
 .cell:hover {
