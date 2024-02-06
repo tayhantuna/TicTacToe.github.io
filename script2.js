@@ -29,14 +29,14 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (checkDraw(cells)) {
         endGame("Berabere!");
     } else {
+        
         currentPlayer = currentPlayer === "X" ? "O" : "X";
+        cells[index].style.color = currentPlayer === 'X' ? 'red' : 'blue'; // Yazı rengini belirle
         if (currentPlayer === "O") {
             message.textContent = "Sıra bot'ta";
-            cell.style.color = "blue"; // O mavi
             setTimeout(botMove, 500); // Bot hareketini geciktir
         } else {
             message.textContent = "Sıra oyuncuda";
-            cell.style.color = "red"; // X kırmızı
         }
     }
     }
