@@ -41,6 +41,13 @@ function checkWinner() {
 function handleClick(index) {
   if (!cells[index].innerHTML && !checkWinner()) {
     cells[index].innerHTML = currentPlayer;
+    if (currentPlayer === 'X') {
+      cells[index].style.color = 'red'; // X kırmızı
+    } else if (currentPlayer === 'O') {
+      cells[index].style.color = 'blue'; // O mavi
+    } else {
+      cells[index].style.color = 'yellow'; // Y sarı
+    }
     currentPlayer = currentPlayer === 'X' ? 'O' : (currentPlayer === 'O' ? 'Y' : 'X');
     messageElement.innerHTML = `Sıradaki Oyuncu: ${currentPlayer}`;
     checkWinner();
@@ -51,4 +58,4 @@ function resetGame() {
   cells.forEach(cell => cell.innerHTML = '');
   currentPlayer = 'X';
   messageElement.innerHTML = `Sıradaki Oyuncu: ${currentPlayer}`;
-}
+      }
