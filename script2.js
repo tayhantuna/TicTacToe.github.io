@@ -20,26 +20,29 @@ document.addEventListener("DOMContentLoaded", function() {
         board.appendChild(cell);
     }
 
-    // Handle cell click
-    function cellClickHandler(cell) {
+    // // Handle cell click
+function cellClickHandler(cell) {
     if (!gameActive || cell.textContent !== "") return;
     cell.textContent = currentPlayer;
+    const index = parseInt(cell.dataset.index); // Hücrenin indeksini alın
     if (checkWin(cells, currentPlayer)) {
         endGame(currentPlayer + " kazandı!");
     } else if (checkDraw(cells)) {
         endGame("Berabere!");
     } else {
-        
         currentPlayer = currentPlayer === "X" ? "O" : "X";
-        cells[index].style.color = currentPlayer === 'X' ? 'red' : 'blue'; // Yazı rengini belirle
+        cell.style.color = currentPlayer === 'X' ? 'red' : 'blue'; // Yazı rengini belirle
         if (currentPlayer === "O") {
             message.textContent = "Sıra bot'ta";
-            botMove(); // Bot hareketini geciktir
+            botMove();
         } else {
             message.textContent = "Sıra oyuncuda";
         }
     }
-    }
+}
+        
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        cells[index].style.color = currentPlayer === 'X' ? 'red' : 'blue'; // 
 
     // Bot move using minimax algorithm with alpha-beta pruning
     function botMove() {
