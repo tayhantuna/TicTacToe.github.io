@@ -19,7 +19,11 @@ document.addEventListener("DOMContentLoaded", function() {
         cells.push(cell);
         board.appendChild(cell);
     }
-
+if (currentPlayer === 'X') {
+      cells[index].style.color = 'red'; // X kırmızı
+    } else if (currentPlayer === 'O') {
+      cells[index].style.color = 'blue'; // O mavi
+}
     // Handle cell click
      function cellClickHandler(cell) {
     if (!gameActive || cell.textContent !== "") return;
@@ -29,14 +33,21 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (checkDraw(cells)) {
         endGame("Berabere!");
     } else {
+
         currentPlayer = currentPlayer === "X" ? "O" : "X";
+
+        if (currentPlayer === 'X') {
+      cells[index].style.color = 'red'; // X kırmızı
+    } else if (currentPlayer === 'O') {
+      cells[index].style.color = 'blue'; // O mavi
+        }
         if (currentPlayer === "O") {
             message.textContent = "Sıra bot'ta";
-            cell.style.color = "blue"; // O mavi
+            // O mavi
             botMove();
         } else {
             message.textContent = "Sıra oyuncuda";
-            cell.style.color = "red"; // X kırmızı
+            // X kırmızı
         }
     }
      }
