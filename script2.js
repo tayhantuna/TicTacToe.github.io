@@ -32,9 +32,11 @@ document.addEventListener("DOMContentLoaded", function() {
             currentPlayer = currentPlayer === "X" ? "O" : "X";
             if (currentPlayer === "O") {
                 message.textContent = "Sıra bot'ta";
+                cell.style.color = "blue"
                 botMove();
             } else {
                 message.textContent = "Sıra oyuncuda";
+                cell.style.color = "red"
             }
         }
     }
